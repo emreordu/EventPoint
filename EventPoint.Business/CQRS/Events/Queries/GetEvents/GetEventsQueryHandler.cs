@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using EventPoint.Business.CQRS.Events.Queries.Requests;
 using EventPoint.Business.Dto;
 using EventPoint.Business.Mediator;
 using EventPoint.DataAccess.Repository.Concrete;

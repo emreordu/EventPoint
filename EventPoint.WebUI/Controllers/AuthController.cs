@@ -9,8 +9,6 @@ using System.Net;
 
 namespace EventPoint.WebUI.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
     public class AuthController : BaseController
     {
         private readonly IMediator _mediator;

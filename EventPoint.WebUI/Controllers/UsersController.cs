@@ -11,8 +11,6 @@ using System.Net;
 
 namespace EventPoint.WebUI.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
     public class UsersController : BaseController
     {
         private readonly IMediator _mediator;

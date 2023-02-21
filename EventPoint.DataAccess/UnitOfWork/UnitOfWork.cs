@@ -1,33 +1,28 @@
 ﻿using EventPoint.DataAccess.Data;
 using EventPoint.DataAccess.Repository.Concrete;
-using Microsoft.Extensions.Configuration;
+using System.Collections.Concurrent;
 
 namespace EventPoint.DataAccess.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
         private ApplicationDbContext _dbContext;
-        private IConfiguration _configuration;
-        private readonly CancellationToken cancellationToken;
-        public UnitOfWork(ApplicationDbContext dbContext, IConfiguration configuration)
+        private readonly ConcurrentDictionary<string, object> keyValuePairs= new ConcurrentDictionary<string, object>();
+        public UnitOfWork(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _configuration = configuration;
-            //Event = new EventRepository(_dbContext);
         }
         public Repository<T> GetRepository<T>() where T : class
         {
-            return new Repository<T>(_dbContext);
-            //fix creating new instance issue every time method gets called. !!
+            return (Repository<T>)keyValuePairs.GetOrAdd(key:typeof(T).Name, value:new Repository<T>(_dbContext));
         }
-        //public IEventRepository Event { get; private set; }
         public void Commit()
         {
             _dbContext.SaveChanges();
         }
-        public async Task CommitAsync()
+        public async Task CommitAsync(CancellationToken cancellationToken)
         {
-            await _dbContext.SaveChangesAsync(cancellationToken);
+               await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

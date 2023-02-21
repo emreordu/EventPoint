@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
+using EventPoint.Business.CQRS.Auth.Commands.CreateToken;
+using EventPoint.Business.CQRS.EventManager.Commands.AddParticipant;
+using EventPoint.Business.CQRS.Events.Commands.CreateEvent;
+using EventPoint.Business.CQRS.Events.Commands.UpdateEvent;
+using EventPoint.Business.CQRS.UserManager.Commands.AddFavorite;
 using EventPoint.Business.Dto;
-using EventPoint.Business.Modules.EventCQRS.Commands.CreateEvent;
-using EventPoint.Business.Modules.EventCQRS.Commands.UpdateEvent;
-using EventPoint.Business.Modules.EventFavoriteCQRS.Commands.AddFavorite;
-using EventPoint.Business.Modules.EventUserCQRS.Commands.AddParticipant;
-using EventPoint.Business.Modules.EventUserCQRS.Commands.UpdateParticipant;
-using EventPoint.Business.Modules.TokenCQRS.Commands.CreateToken;
-using EventPoint.DataAccess.IdentityServer.Dto;
 using EventPoint.Entity.Entities;
 
 namespace EventPoint.Business.MappingProfile
@@ -27,7 +25,6 @@ namespace EventPoint.Business.MappingProfile
             CreateMap<CreateEventCommand,Event>();
             CreateMap<UpdateEventCommand, Event>();
             CreateMap<AddParticipantCommand,EventUser>();
-            CreateMap<UpdateParticipantCommand,EventUser>();
             CreateMap<AddFavoriteCommand,EventFavorite>();
             CreateMap<CreateTokenCommand,LoginDTO>();
         }

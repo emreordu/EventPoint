@@ -1,15 +1,14 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace EventPoint.DataAccess.Repository.Abstract
 {
     public interface IRepository<T> where T : class
     {
-        Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null, bool tracked = true);
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter, bool tracked = true, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter, int pageSize = 3, int pageNumber = 1);
         Task CreateAsync(T entity);
         Task DeleteAsync(T entity);
         Task<T> UpdateAsync(T entity);
-        IQueryable<T> Where(Expression<Func<T, bool>> predicate);
-        //IQueryable<T> IncludeMultiple<T>(IQueryable<T> query, params Expression<Func<T, object>>[] includes);
     }
 }

@@ -21,9 +21,10 @@ namespace EventPoint.Business.Behaviors
             IDbContextTransaction transaction = null;
             try
             {
+                //try to implement transaction on UnitOfWork. birlikte deneyeceğiz.
                 transaction = await _dbContext.Database.BeginTransactionAsync();
                 response = await next();
-                await _unitOfWork.CommitAsync();
+                await _unitOfWork.CommitAsync(cancellationToken);
                 await transaction.CommitAsync();
             }
             catch (Exception)

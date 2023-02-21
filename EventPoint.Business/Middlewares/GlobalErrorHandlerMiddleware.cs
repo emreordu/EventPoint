@@ -26,11 +26,11 @@ namespace EventPoint.Business.Middlewares
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            APIResponse response = new()
+            APIResponse<object> response = new()
             {
                 StatusCode = HttpStatusCode.InternalServerError,
                 IsSuccess = false,
-                ErrorMessages = { ex.Message }
+                ErrorMessages = new Error { ErrorMessage= ex.Message }
             };
             string json = JsonSerializer.Serialize(response);
             return context.Response.WriteAsync(json);

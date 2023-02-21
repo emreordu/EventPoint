@@ -1,4 +1,4 @@
-﻿using EventPoint.DataAccess.IdentityServer.Models;
+﻿using EventPoint.Entity.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

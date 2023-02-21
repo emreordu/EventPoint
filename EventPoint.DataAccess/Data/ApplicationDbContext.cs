@@ -1,17 +1,14 @@
-﻿using EventPoint.DataAccess.IdentityServer.Models;
-using EventPoint.Entity.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using EventPoint.Entity.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventPoint.DataAccess.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<User,Role,int>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-
         }
 
         public DbSet<User> Users { get; set; }
@@ -19,7 +16,19 @@ namespace EventPoint.DataAccess.Data
         public DbSet<EventUser> EventUsers { get; set; }
         public DbSet<EventFavorite> EventFavorites { get; set; }
         public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
-
+        public override int SaveChanges()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                var entity = entry.Entity;
+                if (entry.State == EntityState.Deleted)
+                {
+                    entry.State = EntityState.Modified;
+                    entity.GetType().GetProperty("IsDeleted").SetValue(entity, true);
+                }
+            }
+            return base.SaveChanges();
+        }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             //entity framework modified/created date update
@@ -44,59 +53,6 @@ namespace EventPoint.DataAccess.Data
         {
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<EventUser>().HasKey(eu => new {eu.EventId,eu.UserId});
-
-            modelBuilder.Entity<EventUser>()
-                .HasOne(e => e.Event)
-                .WithMany(eu => eu.EventUsers).
-                HasForeignKey(ei => ei.EventId);
-
-            modelBuilder.Entity<EventUser>()
-                .HasOne(u => u.User)
-                .WithMany(ue => ue.UserEvents).
-                HasForeignKey(ui => ui.UserId);
-
-            modelBuilder.Entity<EventFavorite>().HasKey(ef => new {ef.EventId,ef.UserId});
-
-            modelBuilder.Entity<EventFavorite>()
-               .HasOne(e => e.Event)
-               .WithMany(ef => ef.EventFavorited).
-               HasForeignKey(ei => ei.EventId);
-
-            modelBuilder.Entity<EventFavorite>()
-                .HasOne(u => u.User)
-                .WithMany(fe => fe.FavoritedEvents).
-                HasForeignKey(ui => ui.UserId);
-
-            modelBuilder.Entity<Event>().HasData(
-                new Event
-                {
-                    Id = 1,
-                    Name = "International WebSummIT",
-                    Description = "descriptions will be added",
-                    ParticipantLimit = 100,
-                    EventDate = DateTime.Now.AddDays(10),
-                    CreatedDate = DateTime.Now,
-                },
-                new Event
-                {
-                    Id = 2,
-                    Name = "Speaking Club Event",
-                    Description = "descriptions will be added",
-                    ParticipantLimit = 25,
-                    EventDate = DateTime.Now.AddDays(3),
-                    CreatedDate = DateTime.Now,
-                },
-                new Event
-                {
-                    Id = 3,
-                    Name = "İstanbul Shopping Fest",
-                    Description = "descriptions will be added",
-                    ParticipantLimit = 3000,
-                    EventDate = DateTime.Now.AddDays(25),
-                    CreatedDate = DateTime.Now,
-                });
         }
     }
 }

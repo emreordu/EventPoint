@@ -1,16 +1,19 @@
-﻿using EventPoint.Business.Modules.UserCQRS.Commands.CreateUser;
-using EventPoint.Business.Modules.UserCQRS.Commands.DeleteUser;
-using EventPoint.Business.Modules.UserCQRS.Commands.UpdateUser;
-using EventPoint.Business.Modules.UserCQRS.Queries.GetUserById;
-using EventPoint.Business.Modules.UserCQRS.Queries.GetUsers;
+﻿using EventPoint.Business;
+using EventPoint.Business.CQRS.Users.Commands.CreateUser;
+using EventPoint.Business.CQRS.Users.Commands.DeleteUser;
+using EventPoint.Business.CQRS.Users.Commands.UpdateUser;
+using EventPoint.Business.CQRS.Users.Queries.GetUserById;
+using EventPoint.Business.CQRS.Users.Queries.GetUsers;
+using EventPoint.Business.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace EventPoint.WebUI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController : ControllerBase
+    //[Route("api/[controller]")]
+    //[ApiController]
+    public class UsersController : BaseController
     {
         private readonly IMediator _mediator;
         public UsersController(IMediator mediator)
@@ -18,34 +21,34 @@ namespace EventPoint.WebUI.Controllers
             _mediator = mediator;
         }
         [HttpGet()]
-        public async Task<IActionResult> GetUsers()
+        public async Task<APIResponse<List<UserDTO>>> GetUsers()
         {
             var response = await _mediator.Send(new GetUsersQuery());
-            return Ok(response);
+            return new APIResponse<List<UserDTO>> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK };
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<APIResponse<UserDTO>> GetUserById(int id)
         {
             var response = await _mediator.Send(new GetUserByIdQuery { Id = id });
-            return Ok(response);
+            return new APIResponse<UserDTO> { Result=response,IsSuccess=true, StatusCode = HttpStatusCode.OK };
         }
-        [HttpPost("register")]
-        public async Task<IActionResult> CreateUser(CreateUserCommand request)
+        [HttpPost]
+        public async Task<APIResponse<bool>> CreateUser(CreateUserCommand request)
         {
             var response = await _mediator.Send(request);
-            return Ok(response);
+            return new APIResponse<bool> { Result=response, IsSuccess=true,StatusCode = HttpStatusCode.OK };
         }
-        [HttpPut("update-user")]
-        public async Task<IActionResult> UpdateUser(UpdateUserCommand request)
+        [HttpPut]
+        public async Task<APIResponse<UserDTO>> UpdateUser(UpdateUserCommand request)
         {
             var response = await _mediator.Send(request);
-            return Ok(response);
+            return new APIResponse<UserDTO> { Result=response,IsSuccess=true,StatusCode = HttpStatusCode.OK };
         }
-        [HttpDelete("delete-user")]
-        public async Task<IActionResult> DeleteUser(DeleteUserCommand request)
+        [HttpDelete]
+        public async Task<APIResponse<bool>> DeleteUser(DeleteUserCommand request)
         {
             var response = await _mediator.Send(request);
-            return Ok(response);
+            return new APIResponse<bool> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK };
         }
     }
 }

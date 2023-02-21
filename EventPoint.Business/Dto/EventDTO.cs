@@ -7,7 +7,6 @@
         public string Description { get; set; }
         public int ParticipantLimit { get; set; }
         public DateTime? EventDate { get; set; }
-        //public List<int>? Participants { get; set; }
         public List<ParticipantDTO> Participants { get; set; } = new List<ParticipantDTO>();
     }
 }

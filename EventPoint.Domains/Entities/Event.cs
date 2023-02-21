@@ -1,6 +1,5 @@
 ﻿namespace EventPoint.Entity.Entities
 {
-
     public class Event : BaseEntity
     {
         public string Name { get; set; }
@@ -9,6 +8,5 @@
         public DateTime EventDate { get; set; }
         public IList<EventUser>? EventUsers { get; set; }
         public IList<EventFavorite>? EventFavorited { get; set; }
-
     }
 }

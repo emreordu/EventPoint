@@ -22,26 +22,34 @@ namespace EventPoint.DataAccess.Repository.Concrete
         }
         public async Task DeleteAsync(T entity)
         {
-            dbSet.Entry(entity).State = EntityState.Detached;
             dbSet.Remove(entity);
         }
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, int pageSize = 3, int pageNumber = 1)
         {
             IQueryable<T> query = dbSet;
-            return await query.AsNoTracking().ToListAsync();
-        }
-        public async Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null, bool tracked = true)
-        {
-            IQueryable<T> query = dbSet;
-            if (!tracked)
-            {
-                query = query.AsNoTracking();
-            }
             if (filter != null)
             {
                 query = query.Where(filter);
             }
-            return await query.AsNoTracking().FirstOrDefaultAsync();
+            if (pageSize > 0)
+            {
+                if (pageSize > 50)
+                {
+                    pageSize = 50;
+                }
+                query = query.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+            }
+            return await query.AsNoTracking().ToListAsync();
+        }
+        public async Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter, bool tracked = true,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+        {
+            var query = CreateQuery(filter, include);
+            if (!tracked)
+            {
+                query = query.AsNoTracking();
+            }
+            return await query.FirstOrDefaultAsync(filter);
         }
         public async Task<T> UpdateAsync(T entity)
         {
@@ -49,21 +57,7 @@ namespace EventPoint.DataAccess.Repository.Concrete
             dbSet.Update(entity);
             return entity;
         }
-        public IQueryable<T> Where(Expression<Func<T, bool>> predicate)
-        {
-            return dbSet.Where(predicate);
-        }
-        public IQueryable<T> IncludeMultiple<T>(IQueryable<T> query, params Expression<Func<T, object>>[] includes)
-            where T : class
-        {
-            if (includes != null)
-            {
-                query = includes.Aggregate(query,
-                          (current, include) => current.Include(include));
-            }
-            return query;
-        }
-        public async Task<T> QuerySingleAsync(Expression<Func<T, bool>> predicate = null,
+        public IQueryable<T> CreateQuery(Expression<Func<T, bool>> predicate = null,
             Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = dbSet;
@@ -75,8 +69,7 @@ namespace EventPoint.DataAccess.Repository.Concrete
             {
                 query = query.Where(predicate);
             }
-            var result = await query.SingleOrDefaultAsync();
-            return result;
+            return query;
         }
     }
 }

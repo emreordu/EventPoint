@@ -57,6 +57,9 @@ namespace EventPoint.DataAccess.Migrations
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -75,27 +78,30 @@ namespace EventPoint.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 48, 44, 107, DateTimeKind.Local).AddTicks(6316),
+                            CreatedDate = new DateTime(2023, 2, 8, 12, 3, 52, 777, DateTimeKind.Local).AddTicks(2756),
                             Description = "descriptions will be added",
-                            EventDate = new DateTime(2023, 2, 11, 1, 48, 44, 107, DateTimeKind.Local).AddTicks(6295),
+                            EventDate = new DateTime(2023, 2, 18, 12, 3, 52, 777, DateTimeKind.Local).AddTicks(2738),
+                            IsDeleted = false,
                             Name = "International WebSummIT",
                             ParticipantLimit = 100
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 48, 44, 107, DateTimeKind.Local).AddTicks(6323),
+                            CreatedDate = new DateTime(2023, 2, 8, 12, 3, 52, 777, DateTimeKind.Local).AddTicks(2761),
                             Description = "descriptions will be added",
-                            EventDate = new DateTime(2023, 2, 4, 1, 48, 44, 107, DateTimeKind.Local).AddTicks(6322),
+                            EventDate = new DateTime(2023, 2, 11, 12, 3, 52, 777, DateTimeKind.Local).AddTicks(2760),
+                            IsDeleted = false,
                             Name = "Speaking Club Event",
                             ParticipantLimit = 25
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2023, 2, 1, 1, 48, 44, 107, DateTimeKind.Local).AddTicks(6325),
+                            CreatedDate = new DateTime(2023, 2, 8, 12, 3, 52, 777, DateTimeKind.Local).AddTicks(2763),
                             Description = "descriptions will be added",
-                            EventDate = new DateTime(2023, 2, 26, 1, 48, 44, 107, DateTimeKind.Local).AddTicks(6324),
+                            EventDate = new DateTime(2023, 3, 5, 12, 3, 52, 777, DateTimeKind.Local).AddTicks(2762),
+                            IsDeleted = false,
                             Name = "İstanbul Shopping Fest",
                             ParticipantLimit = 3000
                         });
@@ -181,6 +187,9 @@ namespace EventPoint.DataAccess.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")

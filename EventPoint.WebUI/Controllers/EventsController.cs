@@ -1,53 +1,52 @@
-﻿using EventPoint.Business.Modules.EventCQRS.Commands.CreateEvent;
-using EventPoint.Business.Modules.EventCQRS.Commands.DeleteEvent;
-using EventPoint.Business.Modules.EventCQRS.Commands.UpdateEvent;
-using EventPoint.Business.Modules.EventCQRS.Queries.GetEventById;
-using EventPoint.Business.Modules.EventCQRS.Queries.Requests;
+﻿using EventPoint.Business;
+using EventPoint.Business.CQRS.Events.Commands.CreateEvent;
+using EventPoint.Business.CQRS.Events.Commands.DeleteEvent;
+using EventPoint.Business.CQRS.Events.Commands.UpdateEvent;
+using EventPoint.Business.CQRS.Events.Queries.GetEventById;
+using EventPoint.Business.CQRS.Events.Queries.GetEvents;
+using EventPoint.Business.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace EventPoint.WebUI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EventsController : ControllerBase
+    public class EventsController : BaseController
     {
         private readonly IMediator _mediator;
-        //protected APIResponse _response;
         public EventsController(IMediator mediator)
         {
             _mediator = mediator;
-            //this._response = new();
         }
         [HttpGet]
-        public async Task<ActionResult> GetAll()
+        public async Task<APIResponse<List<EventDTO>>> GetEvents(int pageSize=3, int pageNumber=1)
         {
-            var result = await _mediator.Send(new GetEventsQuery());
-            return Ok(result);
+            var result = await _mediator.Send(new GetEventsQuery { PageSize = pageSize, PageNumber = pageNumber });
+            return new APIResponse<List<EventDTO>> { Result = result, IsSuccess = true, StatusCode = HttpStatusCode.OK };
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<APIResponse<EventDTO>> GetEventById(int id)
         {
             var response = await _mediator.Send(new GetEventByIdQuery { Id = id });
-            return Ok(response);
+            return new APIResponse<EventDTO> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK };
         }
-        [HttpPost("create-event")]
-        public async Task<IActionResult> CreateEvent(CreateEventCommand request)
+        [HttpPost]
+        public async Task<APIResponse<bool>> CreateEvent(CreateEventCommand request)
         {
             var response = await _mediator.Send(request);
-            return Ok(response);
+            return new APIResponse<bool> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK };
         }
-        [HttpDelete("delete-event")]
-        public async Task<IActionResult> DeleteEvent(DeleteEventCommand request)
+        [HttpDelete]
+        public async Task<APIResponse<bool>> DeleteEvent(DeleteEventCommand request)
         {
             var response = await _mediator.Send(request);
-            return Ok(response);
+            return new APIResponse<bool> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK };
         }
-        [HttpPut("update-event")]
-        public async Task<IActionResult> UpdateEvent(UpdateEventCommand request)
+        [HttpPut]
+        public async Task<APIResponse<EventDTO>> UpdateEvent(UpdateEventCommand request)
         {
             var response = await _mediator.Send(request);
-            return Ok(response);
+            return new APIResponse<EventDTO> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK};
         }
     }
 }

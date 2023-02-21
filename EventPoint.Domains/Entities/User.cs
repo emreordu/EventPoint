@@ -8,5 +8,6 @@ namespace EventPoint.Entity.Entities
         public string LastName { get; set; }
         public IList<EventFavorite>? FavoritedEvents { get; set; }
         public IList<EventUser>? UserEvents { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

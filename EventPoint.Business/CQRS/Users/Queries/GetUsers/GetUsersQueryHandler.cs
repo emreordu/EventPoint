@@ -1,28 +1,27 @@
 ﻿using AutoMapper;
 using EventPoint.Business.Dto;
 using EventPoint.Business.Mediator;
-using EventPoint.DataAccess.Data;
+using EventPoint.DataAccess.Repository.Concrete;
+using EventPoint.DataAccess.UnitOfWork;
 using EventPoint.Entity.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace EventPoint.Business.CQRS.Users.Queries.GetUsers
 {
     public class GetUsersQueryHandler : IQueryHandler<GetUsersQuery, List<UserDTO>>
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        public GetUsersQueryHandler(ApplicationDbContext dbContext, UserManager<User> userManager, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly Repository<User> userRepository;
+        public GetUsersQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _dbContext = dbContext;
-            _userManager = userManager;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            userRepository = _unitOfWork.GetRepository<User>();
         }
 
         public async Task<List<UserDTO>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            var users = await _dbContext.Users.ToListAsync();
+            var users = await userRepository.GetAllAsync(null, request.PageSize, request.PageNumber);
             return _mapper.Map<List<UserDTO>>(users);
         }
     }

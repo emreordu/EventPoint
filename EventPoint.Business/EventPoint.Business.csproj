@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EventPoint.Core\EventPoint.Core.csproj" />
     <ProjectReference Include="..\EventPoint.DataAccess\EventPoint.DataAccess.csproj" />
     <ProjectReference Include="..\EventPoint.Domains\EventPoint.Entity.csproj" />
   </ItemGroup>

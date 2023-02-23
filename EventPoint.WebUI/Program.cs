@@ -1,5 +1,6 @@
 using EventPoint.Business.Extensions;
 using EventPoint.Business.Middlewares;
+using EventPoint.Core.Extensions;
 using EventPoint.DataAccess.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.
     AddDataAccesLayer(builder.Configuration)
     .AddBusinessLayer()
-    .AddAuthenticationConfig(builder.Configuration);
+    .AddAuthenticationConfig(builder.Configuration)
+    .AddRedisCache(builder.Configuration);
 
 builder.Services.AddControllers();
 

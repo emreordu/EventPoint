@@ -6,7 +6,6 @@ using EventPoint.Business.CQRS.UserManager.Queries.GetFavoritesByUser;
 using EventPoint.Business.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace EventPoint.WebUI.Controllers
 {
@@ -21,25 +20,25 @@ namespace EventPoint.WebUI.Controllers
         public async Task<APIResponse<bool>> Participate(AddParticipantCommand request)
         {
             var response = await _mediator.Send(request);
-            return new APIResponse<bool> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK };
+            return ProduceResponse(response);
         }
         [HttpPost("add-favorite")]
         public async Task<APIResponse<bool>> AddFavorite(AddFavoriteCommand request)
         {
             var response = await _mediator.Send(request);
-            return new APIResponse<bool> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK };
+            return ProduceResponse(response);
         }
         [HttpGet("get-user-favorites/{id}")]
         public async Task<APIResponse<UserDTO>> GetFavoritesOfUser(int id)
         {
             var response = await _mediator.Send(new GetFavoritesByUserQuery { UserId = id });
-            return new APIResponse<UserDTO> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK };
+            return ProduceResponse(response);
         }
         [HttpDelete("delete-favorite")]
         public async Task<APIResponse<bool>> DeleteFavorite(DeleteFavoriteCommand request)
         {
             var response = await _mediator.Send(request);
-            return new APIResponse<bool> { Result = response, IsSuccess = true, StatusCode = HttpStatusCode.OK };
+            return ProduceResponse(response);
         }
     }
 }

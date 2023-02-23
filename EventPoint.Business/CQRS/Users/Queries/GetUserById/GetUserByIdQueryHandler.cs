@@ -18,6 +18,10 @@ namespace EventPoint.Business.CQRS.Users.Queries.GetUserById
         public async Task<UserDTO> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(request.Id.ToString());
+            if (user == null)
+            {
+                throw new Exception("No user found!");
+            }
             return _mapper.Map<UserDTO>(user);
         }
     }

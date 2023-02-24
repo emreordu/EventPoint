@@ -12,7 +12,7 @@ namespace EventPoint.Business.CQRS.Auth.Commands.RevokeRefreshToken
         }
         public async Task<bool> Handle(RevokeRefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            await _authenticationHelper.RevokeRefreshToken(request.RefreshToken,cancellationToken);
+            await _authenticationHelper.RevokeRefreshToken(request.UserId,cancellationToken);
             return true;
         }
     }

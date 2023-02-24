@@ -1,7 +1,5 @@
 ﻿using EventPoint.Business.Dto;
 using EventPoint.Core;
-using EventPoint.DataAccess.Repository.Concrete;
-using EventPoint.DataAccess.UnitOfWork;
 using EventPoint.Entity.Entities;
 using Microsoft.AspNetCore.Identity;
 using StackExchange.Redis;
@@ -13,21 +11,16 @@ namespace EventPoint.Business.Helpers
     {
         private readonly ITokenHelper _tokenHelper;
         private readonly UserManager<User> _userManager;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly Repository<UserRefreshToken> userRefreshTokenRepository;
-        private const string userKey = "userCaches";
-        private const string tokenKey = "tokenCaches";
         private readonly RedisService _redisService;
         private readonly IDatabase _cacheRepository;
+        private string userKey = "userCache";
+        private string tokenKey = "tokenCache";
 
-        public AuthenticationHelper(ITokenHelper tokenService, UserManager<User> userManager,
-            IUnitOfWork unitOfWork, RedisService redisService)
+        public AuthenticationHelper(ITokenHelper tokenService, UserManager<User> userManager, RedisService redisService)
         {
             _tokenHelper = tokenService;
             _userManager = userManager;
-            _unitOfWork = unitOfWork;
-            userRefreshTokenRepository = _unitOfWork.GetRepository<UserRefreshToken>();
-            _redisService=redisService;
+            _redisService = redisService;
             _cacheRepository = _redisService.GetDb(0);
         }
         public async Task<TokenDTO> CreateTokenAsync(LoginDTO loginDTO, CancellationToken cancellationToken)
@@ -45,66 +38,48 @@ namespace EventPoint.Business.Helpers
             {
                 throw new Exception("Username or password is wrong.");
             }
+            userKey += user.Id.ToString();
+            tokenKey += user.Id.ToString();
+
             var token = _tokenHelper.CreateToken(user);
-            var refreshToken=await _cacheRepository.HashGetAsync(tokenKey,user.Id);
-            var userRefreshToken = await userRefreshTokenRepository.GetFirstOrDefaultAsync(x => x.UserId == user.Id.ToString());
-            
-            if (userRefreshToken == null)
-            {
-                await userRefreshTokenRepository.CreateAsync(new UserRefreshToken
-                {
-                    UserId = user.Id.ToString(),
-                    Code = token.RefreshToken,
-                    Expiration = token.RefreshTokenExpiration
-                });
-            }
-            else
-            {
-                userRefreshToken.Code = token.RefreshToken;
-                userRefreshToken.Expiration = token.RefreshTokenExpiration;
-                await userRefreshTokenRepository.UpdateAsync(userRefreshToken);
-            }
+
             await _cacheRepository.HashSetAsync(userKey, user.Id, JsonSerializer.Serialize(user.Email));
             await _cacheRepository.HashSetAsync(tokenKey, user.Id, JsonSerializer.Serialize(token.RefreshToken));
-            await _cacheRepository.KeyExpireAsync(userKey,token.RefreshTokenExpiration);
+
+            //convert to set. remove keyexpire.
+            await _cacheRepository.KeyExpireAsync(userKey, token.RefreshTokenExpiration);
             await _cacheRepository.KeyExpireAsync(tokenKey, token.RefreshTokenExpiration);
-            await _unitOfWork.CommitAsync(cancellationToken);
             return token;
         }
-        public async Task<TokenDTO> CreateTokenByRefreshToken(string refreshToken, CancellationToken cancellationToken)
+        public async Task<TokenDTO> CreateTokenByRefreshToken(int userId, CancellationToken cancellationToken)
         {
-            var token = await userRefreshTokenRepository.GetFirstOrDefaultAsync(x => x.Code == refreshToken);
-            if (token == null)
+            tokenKey += userId.ToString();
+            var token = await _cacheRepository.HashGetAsync(tokenKey, userId);
+            if (token.IsNullOrEmpty)
             {
                 throw new Exception("Refresh Token not found.");
             }
-
-            var user = await _userManager.FindByIdAsync(token.UserId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 throw new Exception("UserId not found.");
             }
             var accessToken = _tokenHelper.CreateToken(user);
-            token.Code = accessToken.RefreshToken;
-            token.Expiration = accessToken.RefreshTokenExpiration;
-
-            await _unitOfWork.CommitAsync(cancellationToken);
-
+            await _cacheRepository.HashSetAsync(tokenKey, user.Id, JsonSerializer.Serialize(accessToken.RefreshToken));
+            await _cacheRepository.KeyExpireAsync(tokenKey, accessToken.RefreshTokenExpiration);
             return accessToken;
         }
-        public async Task<bool> RevokeRefreshToken(string refreshToken, CancellationToken cancellationToken)
+        public async Task<bool> RevokeRefreshToken(int userId, CancellationToken cancellationToken)
         {
-            var currentToken = await userRefreshTokenRepository.GetFirstOrDefaultAsync(x => x.Code == refreshToken);
-
-            if (currentToken == null)
+            userKey += userId.ToString();
+            tokenKey += userId.ToString();
+            var currentToken = await _cacheRepository.HashGetAsync(tokenKey, userId);
+            if (currentToken.IsNullOrEmpty)
             {
                 throw new Exception("Refreh Token not found.");
             }
             await _cacheRepository.KeyDeleteAsync(userKey);
             await _cacheRepository.KeyDeleteAsync(tokenKey);
-            await userRefreshTokenRepository.DeleteAsync(currentToken);
-
-            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
     }

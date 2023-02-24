@@ -6,6 +6,7 @@ using EventPoint.Business.CQRS.Events.Queries.GetEventById;
 using EventPoint.Business.CQRS.Events.Queries.GetEvents;
 using EventPoint.Business.Dto;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 

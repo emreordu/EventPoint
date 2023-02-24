@@ -24,7 +24,7 @@ namespace EventPoint.DataAccess.Repository.Concrete
         {
             dbSet.Remove(entity);
         }
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, int pageSize = 3, int pageNumber = 1)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, int pageSize = 50, int pageNumber = 1)
         {
             IQueryable<T> query = dbSet;
             if (filter != null)

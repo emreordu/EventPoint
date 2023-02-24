@@ -4,6 +4,6 @@ namespace EventPoint.Business.CQRS.Auth.Commands.RevokeRefreshToken
 {
     public class RevokeRefreshTokenCommand : ICommand<bool>
     {
-        public string RefreshToken { get; set; }
+        public int UserId { get; set; }
     }
 }

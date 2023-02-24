@@ -5,6 +5,7 @@ using EventPoint.Business.CQRS.EventManager.Queries.GetEventWithParticipants;
 using EventPoint.Business.CQRS.EventManager.Queries.GetParticipants;
 using EventPoint.Business.Dto;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventPoint.WebUI.Controllers
@@ -23,6 +24,8 @@ namespace EventPoint.WebUI.Controllers
             var response = await _mediator.Send(new GetParticipantsQuery { PageSize = pageSize, PageNumber = pageNumber });
             return ProduceResponse(response);
         }
+
+        [Authorize]
         [HttpGet("get-event-and-participants/{id}")]
         public async Task<APIResponse<EventDTO>> GetEventAndParticipants(int id)
         {

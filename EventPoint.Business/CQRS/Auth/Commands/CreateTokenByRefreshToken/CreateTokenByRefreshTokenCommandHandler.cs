@@ -13,7 +13,7 @@ namespace EventPoint.Business.CQRS.Auth.Commands.CreateTokenByRefreshToken
         }
         public async Task<TokenDTO> Handle(CreateTokenByRefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            var result = await _authenticationHelper.CreateTokenByRefreshToken(request.RefreshToken,cancellationToken);
+            var result = await _authenticationHelper.CreateTokenByRefreshToken(request.UserId,cancellationToken);
             return result;
         }
     }

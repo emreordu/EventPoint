@@ -9,13 +9,12 @@ namespace EventPoint.DataAccess.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-        }
 
+        }
         public DbSet<User> Users { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventUser> EventUsers { get; set; }
         public DbSet<EventFavorite> EventFavorites { get; set; }
-        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
         public override int SaveChanges()
         {
             foreach (var entry in ChangeTracker.Entries())

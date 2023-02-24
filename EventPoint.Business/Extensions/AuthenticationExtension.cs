@@ -22,8 +22,8 @@ namespace EventPoint.Business.Extensions
                 {
                     IssuerSigningKey = SignService.GetSymmetricSecurityKey(tokenOptions.SecurityKey),
                     ValidateIssuerSigningKey = true,
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };

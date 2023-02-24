@@ -5,6 +5,6 @@ namespace EventPoint.Business.CQRS.Auth.Commands.CreateTokenByRefreshToken
 {
     public class CreateTokenByRefreshTokenCommand: ICommand<TokenDTO>
     {
-        public string RefreshToken { get; set; }
+        public int UserId { get; set; }
     }
 }

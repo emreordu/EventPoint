@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace EventPoint.Entity.Entities
+﻿namespace EventPoint.Entity.Entities
 {
-    public class User : IdentityUser<int>
+    public class User : BaseEntity
     {
-        public string Name { get; set; }
+        public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Email { get; set; }
+        public byte[] PasswordSalt { get; set; }
+        public byte[] PasswordHash { get; set; }
         public IList<EventFavorite>? FavoritedEvents { get; set; }
         public IList<EventUser>? UserEvents { get; set; }
-        public bool IsDeleted { get; set; }
+        public IList<UserRole>? UserRoles { get; set; }
     }
 }

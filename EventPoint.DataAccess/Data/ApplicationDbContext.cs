@@ -1,10 +1,9 @@
 ﻿using EventPoint.Entity.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventPoint.DataAccess.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, int>
+    public class ApplicationDbContext:DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -15,6 +14,8 @@ namespace EventPoint.DataAccess.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<EventUser> EventUsers { get; set; }
         public DbSet<EventFavorite> EventFavorites { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
         public override int SaveChanges()
         {
             foreach (var entry in ChangeTracker.Entries())
@@ -30,7 +31,6 @@ namespace EventPoint.DataAccess.Data
         }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            //entity framework modified/created date update
             var entries = ChangeTracker
                 .Entries()
                 .Where(e => e.Entity is BaseEntity && (

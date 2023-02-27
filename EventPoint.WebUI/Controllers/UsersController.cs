@@ -6,7 +6,6 @@ using EventPoint.Business.CQRS.Users.Queries.GetUserById;
 using EventPoint.Business.CQRS.Users.Queries.GetUsers;
 using EventPoint.Business.Dto;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventPoint.WebUI.Controllers
@@ -18,8 +17,7 @@ namespace EventPoint.WebUI.Controllers
         {
             _mediator = mediator;
         }
-        [Authorize]
-        [HttpGet()]
+        [HttpGet]
         public async Task<APIResponse<List<UserDTO>>> GetUsers(int pageSize = 3, int pageNumber = 1)
         {
             var response = await _mediator.Send(new GetUsersQuery { PageSize = pageSize, PageNumber = pageNumber });

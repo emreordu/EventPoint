@@ -4,11 +4,10 @@ using EventPoint.Business.CQRS.Events.Commands.DeleteEvent;
 using EventPoint.Business.CQRS.Events.Commands.UpdateEvent;
 using EventPoint.Business.CQRS.Events.Queries.GetEventById;
 using EventPoint.Business.CQRS.Events.Queries.GetEvents;
+using EventPoint.Business.CQRS.Events.Queries.GetEventWithParticipants;
 using EventPoint.Business.Dto;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace EventPoint.WebUI.Controllers
 {
@@ -20,7 +19,8 @@ namespace EventPoint.WebUI.Controllers
             _mediator = mediator;
         }
         [HttpGet]
-        public async Task<APIResponse<List<EventDTO>>> GetEvents(int pageSize=3, int pageNumber=1)
+        //[Authorize(Roles = "admin")]
+        public async Task<APIResponse<List<EventDTO>>> GetEvents(int pageSize = 50, int pageNumber = 1)
         {
             var result = await _mediator.Send(new GetEventsQuery { PageSize = pageSize, PageNumber = pageNumber });
             return ProduceResponse(result);
@@ -29,6 +29,12 @@ namespace EventPoint.WebUI.Controllers
         public async Task<APIResponse<EventDTO>> GetEventById(int id)
         {
             var response = await _mediator.Send(new GetEventByIdQuery { Id = id });
+            return ProduceResponse(response);
+        }
+        [HttpGet("{id}/participants")]
+        public async Task<APIResponse<EventDTO>> GetEventWithParticipants(int id)
+        {
+            var response = await _mediator.Send(new GetEventWithParticipantsQuery { EventId = id });
             return ProduceResponse(response);
         }
         [HttpPost]

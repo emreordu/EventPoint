@@ -1,10 +1,10 @@
 ﻿using EventPoint.Business.Dto;
-using EventPoint.Entity.Entities;
+using EventPoint.Business.Helpers.Models;
 
 namespace EventPoint.Business.Helpers
 {
     public interface ITokenHelper
     {
-        TokenDTO CreateToken(User appUser);
+        TokenDTO CreateToken(UserDTO appUser, List<RoleViewModel> roles);
     }
 }

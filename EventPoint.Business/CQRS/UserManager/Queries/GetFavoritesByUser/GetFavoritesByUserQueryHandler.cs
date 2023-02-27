@@ -26,9 +26,6 @@ namespace EventPoint.Business.CQRS.UserManager.Queries.GetFavoritesByUser
         {
             var model = await _dbContext.Users.Include(n => n.FavoritedEvents).ThenInclude(e => e.Event)
                 .FirstOrDefaultAsync(u => u.Id == request.UserId);
-            //ERROR
-            //var newModel = userRepository.CreateQuery(include: x => x.Include(n => n.FavoritedEvents)
-            //    .ThenInclude(x => x.Event).Where(x => x.Id == request.UserId));
 
             if (model == null)
             {

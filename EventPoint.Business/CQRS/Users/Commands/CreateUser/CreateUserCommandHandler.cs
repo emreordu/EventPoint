@@ -1,15 +1,22 @@
-﻿using EventPoint.Business.Mediator;
+﻿using AutoMapper;
+using EventPoint.Business.Helpers;
+using EventPoint.Business.Mediator;
+using EventPoint.DataAccess.Repository.Concrete;
+using EventPoint.DataAccess.UnitOfWork;
 using EventPoint.Entity.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace EventPoint.Business.CQRS.Users.Commands.CreateUser
 {
     public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, bool>
     {
-        private readonly UserManager<User> _userManager;
-        public CreateUserCommandHandler(UserManager<User> userManager)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly Repository<User> userRepository;
+        public CreateUserCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userManager = userManager;
+            _unitOfWork= unitOfWork;
+            _mapper= mapper;
+            userRepository = _unitOfWork.GetRepository<User>();
         }
 
         public async Task<bool> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -18,33 +25,26 @@ namespace EventPoint.Business.CQRS.Users.Commands.CreateUser
             {
                 return false;
             }
-            if (IsUniqueUser(request.Email))
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(request.Password, out passwordHash, out passwordSalt);
+            if (await IsUniqueUser(request.Email))
             {
                 User user = new()
                 {
                     Email = request.Email,
-                    Name = request.Name,
+                    FirstName = request.FirstName,
                     LastName = request.LastName,
-                    UserName = request.Email,
-                    NormalizedEmail = request.Email.ToUpper()
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt
                 };
-                var result = await _userManager.CreateAsync(user, request.Password);
-                if (result.Succeeded)
-                {
-                    if (request.Role == "admin")
-                    {
-                        await _userManager.AddToRoleAsync(user, "admin");
-                    }
-                    await _userManager.AddToRoleAsync(user, "participant");
-                    return true;
-                }
-                return false;
+                await userRepository.CreateAsync(user);
+                return true;
             }
             return false;
         }
-        private bool IsUniqueUser(string username)
+        private async Task<bool> IsUniqueUser(string email)
         {
-            var user = _userManager.Users.FirstOrDefault(u => u.Email == username);
+            var user = await userRepository.GetFirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
                 return true;

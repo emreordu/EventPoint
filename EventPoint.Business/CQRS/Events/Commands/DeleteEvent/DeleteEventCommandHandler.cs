@@ -16,7 +16,7 @@ namespace EventPoint.Business.CQRS.Events.Commands.DeleteEvent
         }
         public async Task<bool> Handle(DeleteEventCommand request, CancellationToken cancellationToken)
         {
-            var isDeleted = eventRepository.GetFirstOrDefaultAsync(x => x.Id == request.Id).Result;
+            var isDeleted = await eventRepository.GetFirstOrDefaultAsync(x => x.Id == request.Id);
             if (isDeleted == null)
             {
                 return false;

@@ -17,7 +17,6 @@ namespace EventPoint.Business.Extensions
             services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(MappingConfig));
             services.AddScoped<ITokenHelper, TokenHelper>();
-            services.AddScoped<IAuthenticationHelper, AuthenticationHelper>();
             return services;
         }
     }

@@ -1,23 +1,26 @@
 ﻿using AutoMapper;
 using EventPoint.Business.Dto;
 using EventPoint.Business.Mediator;
+using EventPoint.DataAccess.Repository.Concrete;
+using EventPoint.DataAccess.UnitOfWork;
 using EventPoint.Entity.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace EventPoint.Business.CQRS.Users.Queries.GetUserById
 {
     public class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, UserDTO>
     {
-        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        public GetUserByIdQueryHandler(UserManager<User> userManager, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly Repository<User> userRepository;
+        public GetUserByIdQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _userManager = userManager;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            userRepository = _unitOfWork.GetRepository<User>();
         }
         public async Task<UserDTO> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.Id.ToString());
+            var user = await userRepository.GetFirstOrDefaultAsync(x => x.Id == request.Id);
             if (user == null)
             {
                 throw new Exception("No user found!");

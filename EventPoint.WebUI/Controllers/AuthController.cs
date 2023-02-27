@@ -1,6 +1,6 @@
 ﻿using EventPoint.Business;
-using EventPoint.Business.CQRS.Auth.Commands.CreateToken;
 using EventPoint.Business.CQRS.Auth.Commands.CreateTokenByRefreshToken;
+using EventPoint.Business.CQRS.Auth.Commands.Login;
 using EventPoint.Business.CQRS.Auth.Commands.RevokeRefreshToken;
 using EventPoint.Business.Dto;
 using MediatR;
@@ -16,7 +16,7 @@ namespace EventPoint.WebUI.Controllers
             _mediator = mediator;
         }
         [HttpPost("login")]
-        public async Task<APIResponse<TokenDTO>> Login(CreateTokenCommand request)
+        public async Task<APIResponse<TokenDTO>> Login(LoginCommand request)
         {
             var result = await _mediator.Send(request);
             return ProduceResponse(result);
@@ -27,7 +27,7 @@ namespace EventPoint.WebUI.Controllers
             var result = await _mediator.Send(request);
             return ProduceResponse(result);
         }
-        [HttpPost("create-token-by-refresh-token")]
+        [HttpPost("token")]
         public async Task<APIResponse<TokenDTO>> CreateTokenByRefreshToken(CreateTokenByRefreshTokenCommand request)
         {
             var result = await _mediator.Send(request);

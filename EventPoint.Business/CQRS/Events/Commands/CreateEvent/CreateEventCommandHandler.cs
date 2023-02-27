@@ -20,7 +20,7 @@ namespace EventPoint.Business.CQRS.Events.Commands.CreateEvent
         public async Task<bool> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
             var mapEventRequest = _mapper.Map<Event>(request);
-            if(mapEventRequest == null)
+            if (mapEventRequest == null)
             {
                 return false;
             }

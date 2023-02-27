@@ -1,8 +1,6 @@
 ﻿using EventPoint.Business.Dto;
-using EventPoint.Entity.Entities;
-using Microsoft.AspNetCore.Identity;
+using EventPoint.Business.Helpers.Models;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -11,11 +9,9 @@ namespace EventPoint.Business.Helpers
 {
     public class TokenHelper : ITokenHelper
     {
-        private readonly UserManager<User> _userManager;
         private readonly CustomTokenOptions _tokenOption;
-        public TokenHelper(UserManager<User> userManager, IOptions<CustomTokenOptions> options)
+        public TokenHelper(IOptions<CustomTokenOptions> options)
         {
-            _userManager = userManager;
             _tokenOption = options.Value;
         }
         private string CreateRefreshToken()
@@ -26,35 +22,29 @@ namespace EventPoint.Business.Helpers
             rnd.GetBytes(numberByte);
             return Convert.ToBase64String(numberByte);
         }
-        private async Task<IEnumerable<Claim>> GetClaims(User user)
+        private IEnumerable<Claim> SetClaims(UserDTO user, List<RoleViewModel> roles)
         {
-            var userRoles = await _userManager.GetRolesAsync(user);
-
-            var userList = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email,user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
-            };
-            userList.AddRange(userRoles.Select(x => new Claim(ClaimTypes.Role, x)));
-            return userList;
+            var claims = new List<Claim>();
+            claims.AddName($"{user.FirstName} {user.LastName}");
+            claims.AddNameIdentifier(user.Id.ToString());
+            claims.AddEmail(user.Email);
+            claims.AddRoles(roles.Select(r => r.Name).ToArray());
+            return claims;
         }
-        public TokenDTO CreateToken(User appUser)
+        public TokenDTO CreateToken(UserDTO appUser, List<RoleViewModel> roles)
         {
             var accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOption.AccessTokenExpiration);
             var refreshTokenExpiration = DateTime.Now.AddMinutes(_tokenOption.RefreshTokenExpiration);
             var securityKey = SignService.GetSymmetricSecurityKey(_tokenOption.SecurityKey);
-
-            SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+            var signingCredentials = SignService.CreateSigningCredentials(securityKey);
 
             JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
                 expires: accessTokenExpiration,
                 notBefore: DateTime.Now,
-                claims: GetClaims(appUser).Result,
+                claims: SetClaims(appUser, roles),
                 signingCredentials: signingCredentials);
 
             var handler = new JwtSecurityTokenHandler();
-
             var token = handler.WriteToken(jwtSecurityToken);
             var tokenDTO = new TokenDTO
             {

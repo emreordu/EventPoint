@@ -1,36 +1,39 @@
 ﻿using AutoMapper;
 using EventPoint.Business.Dto;
+using EventPoint.Business.Helpers;
 using EventPoint.Business.Mediator;
+using EventPoint.DataAccess.Repository.Concrete;
+using EventPoint.DataAccess.UnitOfWork;
 using EventPoint.Entity.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace EventPoint.Business.CQRS.Users.Commands.UpdateUser
 {
     public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, UserDTO>
     {
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Role> _roleManager;
         private readonly IMapper _mapper;
-        public UpdateUserCommandHandler(UserManager<User> userManager, RoleManager<Role> roleManager, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly Repository<User> userRepository;
+        public UpdateUserCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
+            userRepository = _unitOfWork.GetRepository<User>();
         }
         public async Task<UserDTO> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByIdAsync(request.Id.ToString());
+            var user = await userRepository.GetFirstOrDefaultAsync(x => x.Id == request.Id);
             if (user == null)
             {
                 return new UserDTO();
             }
-            user.Name = request.Name;
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(request.Password, out passwordHash, out passwordSalt);
+            user.FirstName = request.FirstName;
             user.Email = request.Email;
             user.LastName = request.LastName;
-            user.UserName = request.Email;
-            var hasher = _userManager.PasswordHasher.HashPassword(user, request.Password);
-            user.PasswordHash = hasher;
-            await _userManager.UpdateAsync(user);
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            await userRepository.UpdateAsync(user);
             return _mapper.Map<UserDTO>(user);
         }
     }

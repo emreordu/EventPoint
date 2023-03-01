@@ -8,5 +8,7 @@
         public DateTime EventDate { get; set; }
         public IList<EventUser>? EventUsers { get; set; }
         public IList<EventFavorite>? EventFavorited { get; set; }
+        public int OwnerId { get; set; }
+        //public User Owner { get; set; }
     }
 }

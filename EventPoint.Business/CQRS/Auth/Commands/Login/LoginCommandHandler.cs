@@ -50,6 +50,7 @@ namespace EventPoint.Business.CQRS.Auth.Commands.Login
                         on role.Id equals userRole.RoleId
                         where userRole.UserId == user.Id
                         select new Entity.Entities.Role { Id = role.Id, Name = role.Name };
+
             var userDTO = _mapper.Map<UserDTO>(user);
             var roleModel = _mapper.Map<List<RoleViewModel>>(roles.ToList());
             var token = _tokenHelper.CreateToken(userDTO, roleModel);

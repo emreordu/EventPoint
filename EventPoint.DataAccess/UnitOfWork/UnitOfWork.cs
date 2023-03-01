@@ -16,10 +16,6 @@ namespace EventPoint.DataAccess.UnitOfWork
         {
             return (Repository<T>)keyValuePairs.GetOrAdd(key:typeof(T).Name, value:new Repository<T>(_dbContext));
         }
-        public void Commit()
-        {
-            _dbContext.SaveChanges();
-        }
         public async Task CommitAsync(CancellationToken cancellationToken)
         {
                await _dbContext.SaveChangesAsync(cancellationToken);

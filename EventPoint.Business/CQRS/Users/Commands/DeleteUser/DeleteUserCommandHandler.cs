@@ -22,7 +22,7 @@ namespace EventPoint.Business.CQRS.Users.Commands.DeleteUser
                 return false;
             }
             await userRepository.DeleteAsync(user);
-            _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
     }

@@ -14,10 +14,8 @@ namespace EventPoint.WebUI.Controllers
 {
     public class UserManagerController : BaseController
     {
-        private readonly IMediator _mediator;
-        public UserManagerController(IMediator mediator)
+        public UserManagerController(IMediator mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
         [HttpPost("event")]
         public async Task<APIResponse<bool>> JoinEvent(JoinEventCommand request)

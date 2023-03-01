@@ -11,10 +11,8 @@ namespace EventPoint.WebUI.Controllers
 {
     public class RolesController : BaseController
     {
-        private readonly IMediator _mediator;
-        public RolesController(IMediator mediator)
+        public RolesController(IMediator mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
         [HttpGet]
         public async Task<APIResponse<List<RoleViewModel>>> GetRoles(int pageSize = 50, int pageNumber = 1)

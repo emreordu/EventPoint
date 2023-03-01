@@ -38,7 +38,7 @@ namespace EventPoint.Business.Helpers
             var securityKey = SignService.GetSymmetricSecurityKey(_tokenOption.SecurityKey);
             var signingCredentials = SignService.CreateSigningCredentials(securityKey);
 
-            JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
+            var jwtSecurityToken = new JwtSecurityToken(
                 expires: accessTokenExpiration,
                 notBefore: DateTime.Now,
                 claims: SetClaims(appUser, roles),

@@ -1,9 +1,10 @@
-﻿using EventPoint.Entity.Entities;
+﻿using EventPoint.DataAccess.Extensions;
+using EventPoint.Entity.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventPoint.DataAccess.Data
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -16,7 +17,7 @@ namespace EventPoint.DataAccess.Data
         public DbSet<EventFavorite> EventFavorites { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
-        public override int SaveChanges()
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             foreach (var entry in ChangeTracker.Entries())
             {
@@ -27,10 +28,6 @@ namespace EventPoint.DataAccess.Data
                     entity.GetType().GetProperty("IsDeleted").SetValue(entity, true);
                 }
             }
-            return base.SaveChanges();
-        }
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
-        {
             var entries = ChangeTracker
                 .Entries()
                 .Where(e => e.Entity is BaseEntity && (
@@ -52,6 +49,7 @@ namespace EventPoint.DataAccess.Data
         {
             modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
             base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyGlobalFilters<bool>("IsDeleted", false);
         }
     }
 }

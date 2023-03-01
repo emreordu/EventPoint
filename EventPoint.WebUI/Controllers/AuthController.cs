@@ -10,10 +10,8 @@ namespace EventPoint.WebUI.Controllers
 {
     public class AuthController : BaseController
     {
-        private readonly IMediator _mediator;
-        public AuthController(IMediator mediator)
+        public AuthController(IMediator mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
         [HttpPost("login")]
         public async Task<APIResponse<TokenDTO>> Login(LoginCommand request)

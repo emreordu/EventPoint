@@ -1,26 +1,28 @@
 ﻿using AutoMapper;
 using EventPoint.Business.Dto;
 using EventPoint.Business.Mediator;
-using EventPoint.DataAccess.Data;
+using EventPoint.DataAccess.Repository.Concrete;
+using EventPoint.DataAccess.UnitOfWork;
+using EventPoint.Entity.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventPoint.Business.CQRS.Events.Queries.GetEventWithParticipants
 {
     public class GetEventWithParticipantsQueryHandler : IQueryHandler<GetEventWithParticipantsQuery, EventDTO>
     {
-        //private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ApplicationDbContext _dbContext;
-        public GetEventWithParticipantsQueryHandler(IMapper mapper, ApplicationDbContext dbContext)
+        private readonly Repository<Event> eventRepository;
+        public GetEventWithParticipantsQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            //_unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _dbContext = dbContext;
+            eventRepository = _unitOfWork.GetRepository<Event>();
         }
         public async Task<EventDTO> Handle(GetEventWithParticipantsQuery request, CancellationToken cancellationToken)
         {
-            var model = await _dbContext.Events.Include(n => n.EventUsers).ThenInclude(e => e.User)
-                .FirstOrDefaultAsync(e => e.Id == request.EventId);
+            var model = await eventRepository.GetFirstOrDefaultAsync(e => e.Id == request.EventId,
+                include: x => x.Include(y => y.EventUsers).ThenInclude(z => z.User));
             if (model == null)
             {
                 return new EventDTO();

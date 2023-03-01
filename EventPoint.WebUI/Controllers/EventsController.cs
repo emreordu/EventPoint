@@ -13,10 +13,8 @@ namespace EventPoint.WebUI.Controllers
 {
     public class EventsController : BaseController
     {
-        private readonly IMediator _mediator;
-        public EventsController(IMediator mediator)
+        public EventsController(IMediator mediator):base(mediator) 
         {
-            _mediator = mediator;
         }
         [HttpGet]
         //[Authorize(Roles = "admin")]

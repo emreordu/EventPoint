@@ -6,6 +6,5 @@ namespace EventPoint.DataAccess.UnitOfWork
     {
         Repository<T> GetRepository<T>() where T : class;
         Task CommitAsync(CancellationToken cancellationToken);
-        void Commit();
     }
 }

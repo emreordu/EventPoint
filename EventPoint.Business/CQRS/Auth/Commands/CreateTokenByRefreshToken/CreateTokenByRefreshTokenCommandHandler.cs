@@ -19,7 +19,6 @@ namespace EventPoint.Business.CQRS.Auth.Commands.CreateTokenByRefreshToken
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly Repository<User> userRepository;
-        private readonly Repository<Entity.Entities.Role> roleRepository;
         private readonly RedisService _redisService;
         private readonly IDatabase _cacheRepository;
         private string userKey = "userCache";
@@ -34,7 +33,6 @@ namespace EventPoint.Business.CQRS.Auth.Commands.CreateTokenByRefreshToken
             _redisService = redisService;
             _cacheRepository = _redisService.GetDb(0);
             userRepository = _unitOfWork.GetRepository<User>();
-            roleRepository = _unitOfWork.GetRepository<Entity.Entities.Role>();
             _dbContext = dbContext;
         }
         public async Task<TokenDTO> Handle(CreateTokenByRefreshTokenCommand request, CancellationToken cancellationToken)
@@ -56,6 +54,7 @@ namespace EventPoint.Business.CQRS.Auth.Commands.CreateTokenByRefreshToken
                         on role.Id equals userRole.RoleId
                         where userRole.UserId == user.Id
                         select new Entity.Entities.Role { Id = role.Id, Name = role.Name };
+
             var userDTO = _mapper.Map<UserDTO>(user);
             var roleModel = _mapper.Map<List<RoleViewModel>>(roles.ToList());
             var accessToken = _tokenHelper.CreateToken(userDTO, roleModel);

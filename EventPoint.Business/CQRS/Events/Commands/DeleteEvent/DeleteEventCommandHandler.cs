@@ -22,7 +22,7 @@ namespace EventPoint.Business.CQRS.Events.Commands.DeleteEvent
                 return false;
             }
             await eventRepository.DeleteAsync(isDeleted);
-            _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
     }

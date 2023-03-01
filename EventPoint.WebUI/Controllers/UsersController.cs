@@ -12,13 +12,11 @@ namespace EventPoint.WebUI.Controllers
 {
     public class UsersController : BaseController
     {
-        private readonly IMediator _mediator;
-        public UsersController(IMediator mediator)
+        public UsersController(IMediator mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
         [HttpGet]
-        public async Task<APIResponse<List<UserDTO>>> GetUsers(int pageSize = 3, int pageNumber = 1)
+        public async Task<APIResponse<List<UserDTO>>> GetUsers(int pageSize = 50, int pageNumber = 1)
         {
             var response = await _mediator.Send(new GetUsersQuery { PageSize = pageSize, PageNumber = pageNumber });
             return ProduceResponse(response);

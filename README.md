@@ -17,7 +17,7 @@ Before you start this project i think it would be better if you already know or 
 7. ExpressJS
 8. ReactJS
 
-## Backend Programming (.NET Core)
+## Step 1: Backend Programming (.NET Core)
 
 For .NET Core backend programming first thing you should learn/study software architectures and design patterns. During project development you will need different approaches as far as the architecture is concerned. For this reason i wanted to start with architectures and design patterns. Below are the architectures and design patterns i used during my project and some additional patterns as they are common ones:
 
@@ -78,3 +78,34 @@ In asynchronous programming, the code gets executed in a thread without having t
 #### Concurrent Dictionary
 
 Concurrent dictionary represents a thread-safe collection of key/value pairs that can be accessed by multiple threads concurrently. You can read this article [Concurrent Dictionary](https://www.c-sharpcorner.com/article/concurrentdictionary-in-c-sharp/)
+
+## Step 2: Backend Programming (NodeJS)
+
+For NodejS backend programming it's little bit different than ASP.NET Core. I used MongoDB as my database instead of MSSQL Serber database. I didn't adapt n-layer architecture or onion architecture. In NodeJS it's a bit different. You apply similar structure but they are in same project. You have folders like services, controllers, models, middlewares etc. There are libraries i used during project development. Following are the libraries i used:
+
+Mongoose, Jsonwebtoken, express, bcryptjs, nodemon and dotenv. These libraries are technically used for same reason as helper libraries in .net. The technologies/programming languages you will need in this step are below:
+
+JavaScript, NodeJS, Express, MongoDB, Mongoose. Let's get learn more about them.
+
+### NodeJS
+
+Node.js is an open source, cross-platform runtime environment for developing server-side and networking applications. Node.js applications are written in JavaScript, and can be run within the Node.js runtime on OS X, Microsoft Windows, and Linux. Node.js also provides a rich library of various JavaScript modules which simplifies the development of web applications using Node.js to a great extent. You can find more information here about NodeJS and there's also a tutorial which is very helpful for first step: [Introduction to NodeJS](https://nodejs.dev/en/learn/)
+
+### ExpressJS
+
+ExpressJS is a NodeJS framework that allows us to create CRUD applications very easily. It gives us the opportunity to write less code and it decreases the complexity of your code which makes it more understandable. There's a document here about [ExpressJS](https://expressjs.com/en/starter/installing.html)
+
+### MongoDB
+
+MongoDB is an open-source, cross-platform, and distributed document-based database designed for ease of application development and scaling. It is a NoSQL database developed by MongoDB Inc. MongoDB database is built to store a huge amount of data and also perform fast. MongoDB is not a Relational Database Management System (RDBMS). It's called a "NoSQL" database. It is opposite to SQL based databases where it does not normalize data under schemas and tables where every table has a fixed structure. Instead, it stores data in the collections as JSON based documents and does not enforce schemas. It does not have tables, rows, and columns as other SQL (RDBMS) databases. If you want to learn more about MongoDB please take a look at this documentation [MongoDB Docs](https://www.mongodb.com/docs/manual/introduction/)
+
+### Mongoose
+
+Mongoose is an Object Data Modeling (ODM) library for MongoDB and Node.js. It manages relationships between data, provides schema validation, and is used to translate between objects in code and the representation of those objects in MongoDB. You can read this article to have a better understanding about [Mongoose](https://medium.com/@monibbormon14/what-is-mongoose-c1bc3031cc08)
+
+### Helper Libraries
+
+1. Bcryptjs. It's a crypto algorithm used in NodeJS projects for hashing passwords. You can look its npm package to learn more about [Bcryptjs](https://www.npmjs.com/package/bcryptjs)
+2. Jsonwebtoken is a token type one of the most common ones. The Jsonwebtoken here we mention is a library generates jwt. You can learm more from here [Jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+3. Nodemon. Nodemon is a command-line tool that helps with the speedy development of Node.js applications. It monitors your project directory and automatically restarts your node application when it detects any changes. This means that you do not have to stop and restart your applications in order for your changes to take effect. You can simply write code, and test your application a few seconds later. You can read its documentation from this link [Nodemon Docs](https://github.com/remy/nodemon#nodemon)
+4. Dotenv is a zero-dependency module that loads environment variables from a .env file into process.env. The dotenv package is a great way to keep passwords, API keys, and other sensitive data out of your code. It allows you to create environment variables in a . env file instead of putting them in your code. You can read its documentation from npm link [Dotenv](https://www.npmjs.com/package/dotenv)

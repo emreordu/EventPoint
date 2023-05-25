@@ -79,6 +79,12 @@ In asynchronous programming, the code gets executed in a thread without having t
 
 Concurrent dictionary represents a thread-safe collection of key/value pairs that can be accessed by multiple threads concurrently. You can read this article [Concurrent Dictionary](https://www.c-sharpcorner.com/article/concurrentdictionary-in-c-sharp/)
 
+### 3rd Party Programs / Tools 
+
+There are some 3rd party programs/technologies i used during development. One of them is Redis. Redis is a in-memory data structure store. It can be used as database also but generally it's used for caching. You can find here more about [Redis](https://redis.io/docs/about/)
+
+There are different ways to implement Redis to your project. I chose using Docker. With Docker i created a Redis container and when i run that container Redis becomes available in my project. If you'd like to learn about Docker here is a good Udemy Course : [Asp.Net Core + Docker](https://adessoturkey.udemy.com/course/aspnet-core-docker/learn/lecture/18443094?start=0#overview)
+ 
 ## Step 2: Backend Programming (NodeJS)
 
 For NodejS backend programming it's little bit different than ASP.NET Core. I used MongoDB as my database instead of MSSQL Serber database. I didn't adapt n-layer architecture or onion architecture. In NodeJS it's a bit different. You apply similar structure but they are in same project. You have folders like services, controllers, models, middlewares etc. There are libraries i used during project development. Following are the libraries i used:

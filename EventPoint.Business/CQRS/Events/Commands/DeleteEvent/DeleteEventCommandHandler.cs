@@ -1,4 +1,5 @@
-﻿using EventPoint.Business.Mediator;
+﻿using EventPoint.Business.Helpers.Models;
+using EventPoint.Business.Mediator;
 using EventPoint.DataAccess.Repository.Concrete;
 using EventPoint.DataAccess.UnitOfWork;
 using EventPoint.Entity.Entities;
@@ -9,21 +10,34 @@ namespace EventPoint.Business.CQRS.Events.Commands.DeleteEvent
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly Repository<Event> eventRepository;
-        public DeleteEventCommandHandler(IUnitOfWork unitOfWork)
+        private readonly Repository<User> userRepository;
+        private readonly IGetCurrentUser _getUserService;
+        public DeleteEventCommandHandler(IUnitOfWork unitOfWork, IGetCurrentUser getUserService)
         {
             _unitOfWork = unitOfWork;
             eventRepository = _unitOfWork.GetRepository<Event>();
+            userRepository = _unitOfWork.GetRepository<User>();
+            _getUserService = getUserService;
         }
         public async Task<bool> Handle(DeleteEventCommand request, CancellationToken cancellationToken)
         {
+            var currentUserId = _getUserService.GetLoginUser();
+            var user = await userRepository.GetFirstOrDefaultAsync(x => x.Id == Convert.ToInt32(currentUserId));
+            if (user == null)
+            {
+                throw new InvalidDataException("User not found.");
+            }
             var isDeleted = await eventRepository.GetFirstOrDefaultAsync(x => x.Id == request.Id);
             if (isDeleted == null)
             {
-                return false;
+                throw new InvalidDataException("No event found. Please make a valid request.");
             }
-            await eventRepository.DeleteAsync(isDeleted);
-            await _unitOfWork.CommitAsync(cancellationToken);
-            return true;
+            if (user.Id == isDeleted.OwnerId)
+            {
+                await eventRepository.DeleteAsync(isDeleted);
+                return true;
+            }
+            throw new InvalidDataException("Invalid request. Make sure you're logged in with owner of the event.");
         }
     }
 }

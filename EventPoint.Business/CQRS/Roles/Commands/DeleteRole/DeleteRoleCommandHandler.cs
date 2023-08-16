@@ -19,7 +19,7 @@ namespace EventPoint.Business.CQRS.Roles.Commands.DeleteRole
             var role = await roleRepository.GetFirstOrDefaultAsync(x => x.Name == request.Name);
             if (role == null)
             {
-                return false;
+                throw new InvalidDataException("No role found. Please make a valid request.");
             }
             await roleRepository.DeleteAsync(role);
             return true;

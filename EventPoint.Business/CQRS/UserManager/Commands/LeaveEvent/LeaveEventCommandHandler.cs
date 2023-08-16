@@ -20,7 +20,7 @@ namespace EventPoint.Business.CQRS.UserManager.Commands.LeaveEvent
             var model = await eventUserRepository.GetFirstOrDefaultAsync(x => x.UserId == request.UserId && x.EventId == request.EventId);
             if (model == null)
             {
-                throw new Exception("Invalid Request");
+                throw new InvalidDataException("Invalid Request");
             }
             await eventUserRepository.DeleteAsync(model);
             return true;

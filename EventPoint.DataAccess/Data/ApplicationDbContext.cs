@@ -19,7 +19,7 @@ namespace EventPoint.DataAccess.Data
         public DbSet<UserRole> UserRoles { get; set; }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            foreach (var entry in ChangeTracker.Entries())
+            foreach (var entry in ChangeTracker.Entries().Where(e=>e.Entity is BaseEntity))
             {
                 var entity = entry.Entity;
                 if (entry.State == EntityState.Deleted)

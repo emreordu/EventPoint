@@ -10,6 +10,6 @@
         public IList<EventFavorite>? FavoritedEvents { get; set; }
         public IList<EventUser>? UserEvents { get; set; }
         public IList<UserRole>? UserRoles { get; set; }
-        //public IList<Event> OwnedEvents { get; set; }
+        public IList<Event> OwnedEvents { get; set; }
     }
 }

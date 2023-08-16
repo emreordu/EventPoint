@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventPoint.Business", "Even
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventPoint.WebUI", "EventPoint.WebUI\EventPoint.WebUI.csproj", "{44CC440B-A4F8-4A4C-8B42-4D073C640CC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventPoint.Core", "EventPoint.Core\EventPoint.Core.csproj", "{8F802225-0E25-4E1B-8DB6-C6C662468A71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventPoint.Core", "EventPoint.Core\EventPoint.Core.csproj", "{8F802225-0E25-4E1B-8DB6-C6C662468A71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

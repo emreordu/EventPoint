@@ -24,7 +24,7 @@ namespace EventPoint.Business.CQRS.Users.Commands.UpdateUser
             var user = await userRepository.GetFirstOrDefaultAsync(x => x.Id == request.Id);
             if (user == null)
             {
-                return new UserDTO();
+                throw new InvalidDataException("No user found. Please make a valid request.");
             }
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(request.Password, out passwordHash, out passwordSalt);

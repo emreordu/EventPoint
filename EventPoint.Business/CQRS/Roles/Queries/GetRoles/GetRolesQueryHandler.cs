@@ -27,7 +27,7 @@ namespace EventPoint.Business.CQRS.Roles.Queries.GetRoles
                 var mapRoles = _mapper.Map<List<RoleViewModel>>(roles);
                 return mapRoles;
             }
-            throw new InvalidOperationException();
+            throw new InvalidDataException("No role found. Please make a valid request.");
         }
     }
 }

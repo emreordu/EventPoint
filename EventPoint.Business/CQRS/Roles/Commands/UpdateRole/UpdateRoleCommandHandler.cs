@@ -19,7 +19,7 @@ namespace EventPoint.Business.CQRS.Roles.Commands.UpdateRole
             var isUpdated = await roleRepository.GetFirstOrDefaultAsync(x => x.Id == request.Id);
             if (isUpdated == null)
             {
-                throw new Exception("No role found. Please make a valid request.");
+                throw new InvalidDataException("No role found. Please make a valid request.");
             }
             isUpdated.Name = request.Name;
             await roleRepository.UpdateAsync(isUpdated);

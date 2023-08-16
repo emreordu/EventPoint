@@ -1,4 +1,5 @@
 ﻿using EventPoint.DataAccess.Data;
+using EventPoint.DataAccess.Interceptor;
 using EventPoint.DataAccess.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,11 +13,11 @@ namespace EventPoint.DataAccess.Extensions
         {
             services.AddDbContext<ApplicationDbContext>(option =>
             {
-                option.UseSqlServer(configuration.GetConnectionString("DefaultSQLConnection"));
+                option.UseSqlServer(configuration.GetConnectionString("DefaultSQLConnection")).
+                AddInterceptors(new LogSQLQueryInterceptor());
                 option.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
             services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
-            //services.AddIdentity<User, Role>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             return services;
         }
     }

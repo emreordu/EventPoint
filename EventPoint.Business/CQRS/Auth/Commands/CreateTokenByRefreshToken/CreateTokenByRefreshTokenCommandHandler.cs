@@ -4,10 +4,10 @@ using EventPoint.Business.Helpers;
 using EventPoint.Business.Helpers.Models;
 using EventPoint.Business.Mediator;
 using EventPoint.Core;
-using EventPoint.DataAccess.Data;
 using EventPoint.DataAccess.Repository.Concrete;
 using EventPoint.DataAccess.UnitOfWork;
 using EventPoint.Entity.Entities;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using System.Text.Json;
 
@@ -23,9 +23,8 @@ namespace EventPoint.Business.CQRS.Auth.Commands.CreateTokenByRefreshToken
         private readonly IDatabase _cacheRepository;
         private string userKey = "userCache";
         private string tokenKey = "tokenCache";
-        private readonly ApplicationDbContext _dbContext;
         public CreateTokenByRefreshTokenCommandHandler(ITokenHelper tokenHelper, IMapper mapper, IUnitOfWork unitOfWork,
-            RedisService redisService, ApplicationDbContext dbContext)
+            RedisService redisService)
         {
             _tokenHelper = tokenHelper;
             _unitOfWork = unitOfWork;
@@ -33,7 +32,6 @@ namespace EventPoint.Business.CQRS.Auth.Commands.CreateTokenByRefreshToken
             _redisService = redisService;
             _cacheRepository = _redisService.GetDb(0);
             userRepository = _unitOfWork.GetRepository<User>();
-            _dbContext = dbContext;
         }
         public async Task<TokenDTO> Handle(CreateTokenByRefreshTokenCommand request, CancellationToken cancellationToken)
         {
@@ -42,21 +40,17 @@ namespace EventPoint.Business.CQRS.Auth.Commands.CreateTokenByRefreshToken
             var token = await _cacheRepository.StringGetAsync(tokenKey);
             if (token.IsNullOrEmpty)
             {
-                throw new Exception("Refresh Token not found.");
+                throw new InvalidDataException("Refresh Token not found.");
             }
-            var user = await userRepository.GetFirstOrDefaultAsync(x => x.Id == request.UserId);
+            var user = await userRepository.GetFirstOrDefaultAsync(x => x.Id == request.UserId,
+                include: x => x.Include(y => y.UserRoles).ThenInclude(z => z.Role));
             if (user == null)
             {
-                throw new Exception("UserId not found.");
+                throw new InvalidDataException("UserId not found.");
             }
-            var roles = from role in _dbContext.Roles
-                        join userRole in _dbContext.UserRoles
-                        on role.Id equals userRole.RoleId
-                        where userRole.UserId == user.Id
-                        select new Entity.Entities.Role { Id = role.Id, Name = role.Name };
-
+            var roles = user.UserRoles.Select(x => x.Role).ToList();
             var userDTO = _mapper.Map<UserDTO>(user);
-            var roleModel = _mapper.Map<List<RoleViewModel>>(roles.ToList());
+            var roleModel = _mapper.Map<List<RoleViewModel>>(roles);
             var accessToken = _tokenHelper.CreateToken(userDTO, roleModel);
             TimeSpan timeSpan = accessToken.RefreshTokenExpiration - DateTime.Now;
             await _cacheRepository.StringSetAsync(userKey, JsonSerializer.Serialize(user.Email), timeSpan);

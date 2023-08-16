@@ -23,7 +23,7 @@ namespace EventPoint.Business.CQRS.Users.Queries.GetUserById
             var user = await userRepository.GetFirstOrDefaultAsync(x => x.Id == request.Id);
             if (user == null)
             {
-                throw new Exception("No user found!");
+                throw new InvalidDataException("No user found!");
             }
             return _mapper.Map<UserDTO>(user);
         }

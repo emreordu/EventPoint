@@ -22,6 +22,10 @@ namespace EventPoint.Business.CQRS.Users.Queries.GetUsers
         public async Task<List<UserDTO>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
             var users = await userRepository.GetAllAsync(null, request.PageSize, request.PageNumber);
+            if (users == null)
+            {
+                throw new InvalidDataException("No user found. Please make a valid request.");
+            }
             return _mapper.Map<List<UserDTO>>(users);
         }
     }

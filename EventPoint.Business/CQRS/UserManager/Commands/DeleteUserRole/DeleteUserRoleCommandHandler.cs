@@ -20,7 +20,7 @@ namespace EventPoint.Business.CQRS.UserManager.Commands.DeleteUserRole
             var model = await roleRepository.GetFirstOrDefaultAsync(x => x.UserId == request.UserId && x.RoleId == request.RoleId);
             if (model == null)
             {
-                throw new Exception("Invalid Request");
+                throw new Exception("Invalid Request.");
             }
             await roleRepository.DeleteAsync(model);
             return true;

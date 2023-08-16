@@ -25,7 +25,7 @@ namespace EventPoint.Business.CQRS.UserManager.Queries.GetFavoritesByUser
                 include: x => x.Include(y => y.FavoritedEvents).ThenInclude(z => z.Event));
             if (model == null)
             {
-                return new UserDTO();
+                throw new InvalidDataException("No user and favorited event found.");
             }
             var eventList = model.FavoritedEvents;
             var userDTO = _mapper.Map<UserDTO>(model);

@@ -16,18 +16,18 @@ namespace EventPoint.Business.CQRS.Events.Queries.GetEvents
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            eventRepository= _unitOfWork.GetRepository<Event>();
+            eventRepository = _unitOfWork.GetRepository<Event>();
         }
 
         public async Task<List<EventDTO>> Handle(GetEventsQuery request, CancellationToken cancellationToken)
         {
-            var events = await eventRepository.GetAllAsync(null,request.PageSize,request.PageNumber);
-            if(events.Any())
+            var events = await eventRepository.GetAllAsync(null, request.PageSize, request.PageNumber);
+            if (events.Any())
             {
                 var mapEvents = _mapper.Map<List<EventDTO>>(events);
                 return mapEvents;
             }
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("No event found. Please make a valid request.");
         }
     }
 }

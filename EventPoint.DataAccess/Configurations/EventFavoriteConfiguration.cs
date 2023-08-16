@@ -13,12 +13,11 @@ namespace EventPoint.DataAccess.Configurations
             builder
                .HasOne(e => e.Event)
                .WithMany(ef => ef.EventFavorited).
-               HasForeignKey(ei => ei.EventId);
-
+               HasForeignKey(ei => ei.EventId).OnDelete(DeleteBehavior.NoAction);
             builder
                 .HasOne(u => u.User)
                 .WithMany(fe => fe.FavoritedEvents).
-                HasForeignKey(ui => ui.UserId);
+                HasForeignKey(ui => ui.UserId).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

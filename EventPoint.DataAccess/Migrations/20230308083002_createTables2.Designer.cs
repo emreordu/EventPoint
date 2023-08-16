@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventPoint.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230224085809_createTables")]
-    partial class createTables
+    [Migration("20230308083002_createTables2")]
+    partial class createTables2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,7 +47,11 @@ namespace EventPoint.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ParticipantLimit")
                         .HasColumnType("int");
@@ -57,15 +61,17 @@ namespace EventPoint.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OwnerId");
+
                     b.ToTable("Events");
                 });
 
             modelBuilder.Entity("EventPoint.Entity.Entities.EventFavorite", b =>
                 {
-                    b.Property<int>("EventId")
+                    b.Property<int?>("EventId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("EventId", "UserId");
@@ -173,18 +179,29 @@ namespace EventPoint.DataAccess.Migrations
                     b.ToTable("UserRoles");
                 });
 
+            modelBuilder.Entity("EventPoint.Entity.Entities.Event", b =>
+                {
+                    b.HasOne("EventPoint.Entity.Entities.User", "Owner")
+                        .WithMany("OwnedEvents")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
             modelBuilder.Entity("EventPoint.Entity.Entities.EventFavorite", b =>
                 {
                     b.HasOne("EventPoint.Entity.Entities.Event", "Event")
                         .WithMany("EventFavorited")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("EventPoint.Entity.Entities.User", "User")
                         .WithMany("FavoritedEvents")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Event");
@@ -197,13 +214,13 @@ namespace EventPoint.DataAccess.Migrations
                     b.HasOne("EventPoint.Entity.Entities.Event", "Event")
                         .WithMany("EventUsers")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("EventPoint.Entity.Entities.User", "User")
                         .WithMany("UserEvents")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Event");
@@ -245,6 +262,8 @@ namespace EventPoint.DataAccess.Migrations
             modelBuilder.Entity("EventPoint.Entity.Entities.User", b =>
                 {
                     b.Navigation("FavoritedEvents");
+
+                    b.Navigation("OwnedEvents");
 
                     b.Navigation("UserEvents");
 

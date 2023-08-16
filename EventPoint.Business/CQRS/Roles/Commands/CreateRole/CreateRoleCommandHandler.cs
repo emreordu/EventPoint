@@ -22,7 +22,7 @@ namespace EventPoint.Business.CQRS.Roles.Commands.CreateRole
             var newRole = _mapper.Map<Role>(request);
             if (newRole == null)
             {
-                return false;
+                throw new InvalidDataException("Request is null.");
             }
             await roleRepository.CreateAsync(newRole);
             return true;

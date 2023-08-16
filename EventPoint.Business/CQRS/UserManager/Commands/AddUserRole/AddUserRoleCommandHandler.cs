@@ -27,17 +27,17 @@ namespace EventPoint.Business.CQRS.UserManager.Commands.AddUserRole
             var user = await userRepository.GetFirstOrDefaultAsync(x => x.Id == request.UserId);
             if (user == null)
             {
-                throw new Exception("No user found.");
+                throw new InvalidDataException("No user found.");
             }
             var role = await roleRepository.GetFirstOrDefaultAsync(x => x.Id == request.RoleId);
             if (role == null)
             {
-                throw new Exception("No role found.");
+                throw new InvalidDataException("No role found.");
             }
             var model = _mapper.Map<UserRole>(request);
             if (model == null)
             {
-                throw new Exception("Invalid request.");
+                throw new InvalidDataException("Request is null.");
             }
             await userRoleRepository.CreateAsync(model);
             return true;

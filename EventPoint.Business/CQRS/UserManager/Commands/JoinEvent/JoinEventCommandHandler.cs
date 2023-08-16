@@ -27,17 +27,17 @@ namespace EventPoint.Business.CQRS.UserManager.Commands.JoinEvent
             var user = await userRepository.GetFirstOrDefaultAsync(x => x.Id == request.UserId);
             if (user == null)
             {
-                throw new Exception("No user found.");
+                throw new InvalidDataException("No user found.");
             }
             var eventData = await eventRepository.GetFirstOrDefaultAsync(x => x.Id == request.EventId);
             if (eventData == null)
             {
-                throw new Exception("No event found.");
+                throw new InvalidDataException("No event found.");
             }
             var model = _mapper.Map<EventUser>(request);
             if (model == null)
             {
-                throw new Exception("Invalid Request");
+                throw new InvalidDataException("Request is null");
             }
             var isExceed = await IsLimitExceed(model.EventId);
             if (isExceed == false)

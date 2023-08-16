@@ -25,7 +25,7 @@ namespace EventPoint.Business.CQRS.Events.Queries.GetEventWithParticipants
                 include: x => x.Include(y => y.EventUsers).ThenInclude(z => z.User));
             if (model == null)
             {
-                return new EventDTO();
+                throw new InvalidDataException("No event found. Please make a valid request.");
             }
             var userList = model.EventUsers;
             var eventDTO = _mapper.Map<EventDTO>(model);

@@ -9,11 +9,8 @@ namespace EventPoint.WebUI.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
-        protected readonly IMediator _mediator;
-        public BaseController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        private IMediator _mediator;
+        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
         public APIResponse<T> ProduceResponse<T>(T obj)
         {
             var response = new APIResponse<T>() { Result = obj, IsSuccess = true, ErrorMessages = null, StatusCode = HttpStatusCode.OK };

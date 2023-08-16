@@ -20,7 +20,7 @@ namespace EventPoint.Business.CQRS.UserManager.Commands.DeleteFavorite
             var model = await eventFavoriteRepository.GetFirstOrDefaultAsync(x => x.UserId == request.UserId && x.EventId == request.EventId);
             if (model == null)
             {
-                throw new Exception("Invalid Request");
+                throw new InvalidDataException("Invalid request.");
             }
             await eventFavoriteRepository.DeleteAsync(model);
             return true;

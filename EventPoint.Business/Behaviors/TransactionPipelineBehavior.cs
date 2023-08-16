@@ -38,7 +38,6 @@ namespace EventPoint.Business.Behaviors
                 if (transaction != null)
                     await transaction.DisposeAsync();
             }
-            //return await next();
             return response;
         }
     }

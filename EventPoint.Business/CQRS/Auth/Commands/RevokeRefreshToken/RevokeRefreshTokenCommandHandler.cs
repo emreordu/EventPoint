@@ -22,7 +22,7 @@ namespace EventPoint.Business.CQRS.Auth.Commands.RevokeRefreshToken
             var currentToken = await _cacheRepository.StringGetAsync(tokenKey);
             if (currentToken.IsNullOrEmpty)
             {
-                throw new Exception("Refreh Token not found.");
+                throw new InvalidDataException("Refreh Token not found.");
             }
             await _cacheRepository.KeyDeleteAsync(tokenKey);
             await _cacheRepository.KeyDeleteAsync(userKey);

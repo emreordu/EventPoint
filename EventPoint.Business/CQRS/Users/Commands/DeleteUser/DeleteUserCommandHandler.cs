@@ -19,7 +19,7 @@ namespace EventPoint.Business.CQRS.Users.Commands.DeleteUser
             var user = await userRepository.GetFirstOrDefaultAsync(x=>x.Id== request.Id);
             if (user == null)
             {
-                return false;
+                throw new InvalidDataException("No user found. Please make a valid request.");
             }
             await userRepository.DeleteAsync(user);
             await _unitOfWork.CommitAsync(cancellationToken);

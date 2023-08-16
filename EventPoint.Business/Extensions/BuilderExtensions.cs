@@ -1,5 +1,6 @@
 ﻿using EventPoint.Business.Behaviors;
 using EventPoint.Business.Helpers;
+using EventPoint.Business.Helpers.Models;
 using EventPoint.Business.MappingProfile;
 using FluentValidation;
 using MediatR;
@@ -17,6 +18,7 @@ namespace EventPoint.Business.Extensions
             services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(MappingConfig));
             services.AddScoped<ITokenHelper, TokenHelper>();
+            services.AddScoped<IGetCurrentUser, GetCurrentUser>();
             return services;
         }
     }

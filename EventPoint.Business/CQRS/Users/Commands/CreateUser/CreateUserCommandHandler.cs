@@ -10,12 +10,10 @@ namespace EventPoint.Business.CQRS.Users.Commands.CreateUser
     public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, bool>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
         private readonly Repository<User> userRepository;
-        public CreateUserCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public CreateUserCommandHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork= unitOfWork;
-            _mapper= mapper;
             userRepository = _unitOfWork.GetRepository<User>();
         }
 
@@ -23,10 +21,9 @@ namespace EventPoint.Business.CQRS.Users.Commands.CreateUser
         {
             if (request == null)
             {
-                return false;
+                throw new InvalidDataException("Request is null.");
             }
-            byte[] passwordHash, passwordSalt;
-            HashingHelper.CreatePasswordHash(request.Password, out passwordHash, out passwordSalt);
+            HashingHelper.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
             if (await IsUniqueUser(request.Email))
             {
                 User user = new()
@@ -40,7 +37,7 @@ namespace EventPoint.Business.CQRS.Users.Commands.CreateUser
                 await userRepository.CreateAsync(user);
                 return true;
             }
-            return false;
+            throw new InvalidDataException("User already exists. Make a valid request.");
         }
         private async Task<bool> IsUniqueUser(string email)
         {
